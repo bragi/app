@@ -1,9 +1,14 @@
+require "fileutils"
+
 class AppConfigGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       if ARGV.empty?
         if File.exist? Rails.root.join("config", "app.yml")
           show_banner
+        elsif File.exist? Rails.root.join("config", "app.yml.example")
+          FileUtils.cp(Rails.root.join("config", "app.yml.example"),
+            Rails.root.join("config", "app.yml"))
         else
           m.file "app.yml", "config/app.yml"
         end

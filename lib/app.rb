@@ -22,7 +22,7 @@ module App
     #   App.apis("flickr")
     def config(*args)
       @@config if args.empty?
-      args.inject(@@config) { |config, arg| config[arg] }
+      args.inject(@@config) { |config, arg| config && config[arg] }
     end
     alias [] config
 
@@ -43,6 +43,7 @@ module App
     @@config = all[Rails.env] || all
     @@config.freeze
   rescue Errno::ENOENT => e
+    
     puts '** App: no file "config/app.yml". Run `script/generate app_config`.'
   end
 end

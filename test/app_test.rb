@@ -61,4 +61,8 @@ class AppTest < ActiveSupport::TestCase
   test "should be frozen" do
     assert_raise(TypeError) { App.config["loaded_at"] = Time.now }
   end
+
+  test "should ignore null nested keys" do
+    assert_nil App.config("missing_scope", "nested_missing_key")
+  end
 end
