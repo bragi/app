@@ -1,3 +1,10 @@
+=== 0.2.3 / 2009-06-02
+
+* 2 minor enhancements
+
+  * Non existing nested keys are ignored and null is returned
+  * Generator uses existing app.yml.example file when it exists in application
+
 === 0.2.2 / 2009-04-17
 
 * 2 minor enhancements
