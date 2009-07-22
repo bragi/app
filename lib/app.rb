@@ -59,7 +59,8 @@ unless __FILE__ == "(eval)"
   end
 
   # Iterate through other App configs and namespace them.
-  Dir[Rails.root.join("config", "app", "**/*.yml")].sort.each do |config|
+  path = Rails.root.join("config", "app", "**/*.yml").to_s
+  Dir[path].sort.each do |config|
     name = config.gsub(/#{Rails.root.join("config")}\/|\.yml/) {}.classify
 
     # Recognize all parents.
