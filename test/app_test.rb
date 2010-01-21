@@ -65,4 +65,8 @@ class AppTest < ActiveSupport::TestCase
   test "should ignore null nested keys" do
     assert_nil App.config("missing_scope", "nested_missing_key")
   end
+  
+  test "should be indifferent to class of key if possible" do
+    assert_equal App['welcome_message'], App[:welcome_message]
+  end
 end

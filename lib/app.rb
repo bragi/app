@@ -3,8 +3,9 @@
 # What would your app be without it? Still an app, but without App.
 module App
   VERSION = "0.2.2"
+  HASH_KLASS = Object.const_defined?("HashWithIndifferentAccess") ? HashWithIndifferentAccess : Hash
 
-  @@config = {} # Initialize.
+  @@config = HASH_KLASS.new # Initialize.
   class << self
     # Returns the application configuration hash, as defined in
     # "config/app.yml".
@@ -39,7 +40,7 @@ module App
 
   begin
     raw = File.read Rails.root.join("config", "#{name.underscore}.yml")
-    all = YAML.load ERB.new(raw).result
+    all = HASH_KLASS.new.merge(YAML.load ERB.new(raw).result)
     @@config = all[Rails.env] || all
     @@config.freeze
   rescue Errno::ENOENT => e
@@ -65,7 +66,7 @@ unless __FILE__ == "(eval)"
 
     # Recognize all parents.
     line = name.split "::"
-    line.inject line.shift do |parentage, descendant|
+    line.inject do |parentage, descendant|
       eval "module #{parentage}; end"
       "#{parentage}::#{descendant}"
     end
