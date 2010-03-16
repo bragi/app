@@ -2,7 +2,7 @@
 #
 # What would your app be without it? Still an app, but without App.
 module App
-  VERSION = "0.2.2"
+  VERSION = "0.2.5"
   HASH_KLASS = Object.const_defined?("HashWithIndifferentAccess") ? HashWithIndifferentAccess : Hash
 
   @@config = HASH_KLASS.new # Initialize.
@@ -22,6 +22,7 @@ module App
     #
     #   App.apis("flickr")
     def config(*args)
+      read_config unless @@config
       @@config if args.empty?
       args.inject(@@config) { |config, arg| config && config[arg] }
     end
@@ -36,16 +37,18 @@ module App
     def method_missing(method, *args)
       self[method.to_s, *args] || self[method, *args]
     end
-  end
-
-  begin
-    raw = File.read Rails.root.join("config", "#{name.underscore}.yml")
-    all = HASH_KLASS.new.merge(YAML.load ERB.new(raw).result)
-    @@config = all[Rails.env] || all
-    @@config.freeze
-  rescue Errno::ENOENT => e
     
-    puts '** App: no file "config/app.yml". Run `script/generate app_config`.'
+    def read_config
+      begin
+        raw = File.read Rails.root.join("config", "#{name.underscore}.yml")
+        all = HASH_KLASS.new.merge(YAML.load ERB.new(raw).result)
+        @@config = all[Rails.env] || all
+        @@config.freeze
+      rescue Errno::ENOENT => e
+        puts '** App: no file "config/app.yml". Run `script/generate app_config`.'
+        raise e
+      end
+    end
   end
 end
 
