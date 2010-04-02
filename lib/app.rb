@@ -2,10 +2,10 @@
 #
 # What would your app be without it? Still an app, but without App.
 module App
-  VERSION = "0.2.5"
+  VERSION = "0.2.6"
   HASH_KLASS = Object.const_defined?("HashWithIndifferentAccess") ? HashWithIndifferentAccess : Hash
 
-  @@config = HASH_KLASS.new # Initialize.
+  @@config = nil # Initialize.
   class << self
     # Returns the application configuration hash, as defined in
     # "config/app.yml".
@@ -22,7 +22,7 @@ module App
     #
     #   App.apis("flickr")
     def config(*args)
-      read_config unless @@config
+      read_config
       @@config if args.empty?
       args.inject(@@config) { |config, arg| config && config[arg] }
     end
@@ -39,6 +39,8 @@ module App
     end
     
     def read_config
+      return if @@config
+      @@config = HASH_KLASS.new
       begin
         raw = File.read Rails.root.join("config", "#{name.underscore}.yml")
         all = HASH_KLASS.new.merge(YAML.load ERB.new(raw).result)

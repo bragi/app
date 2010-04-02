@@ -59,7 +59,7 @@ class AppTest < ActiveSupport::TestCase
   end
 
   test "should be frozen" do
-    assert_raise(RuntimeError) { App.config["loaded_at"] = Time.now }
+    assert_raise(TypeError) { App.config["loaded_at"] = Time.now }
   end
 
   test "should ignore null nested keys" do
